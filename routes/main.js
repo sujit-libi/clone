@@ -4,11 +4,17 @@ const Gig = require('../models/gig');
 const User = require('../models/user');
 
 router.get('/', (req, res, next) => {
-    res.render('main/home');
+    // res.render('main/home');
+    Gig.find({}, function (err, gigs) {
+        res.render('main/home', { gigs: gigs });
+    })
 });
 
 router.get('/my-gigs', (req, res, next) => {
-    res.render('main/my-gigs');
+    // res.render('main/my-gigs');
+    Gig.find({ owner: req.user._id }, function (err, gigs) {
+        res.render('main/my-gigs', { gigs: gigs });
+    })
 });
 
 router.route('/add-new-gig')
