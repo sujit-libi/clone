@@ -20,7 +20,7 @@ const io = require('socket.io')(http);
 
 
 
-mongoose.connect(config.database, function(err) {
+mongoose.connect(config.database, function (err) {
   if (err) console.log(err);
   console.log("Connected to the database");
 });
@@ -40,28 +40,28 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
-app.use(function(req, res, next) {
+app.use(function (req, res, next) {
   res.locals.user = req.user;
   next();
 });
 
 io.use(passportSocketIo.authorize({
   cookieParser: cookieParser,       // the same middleware you registrer in express
-  key:          'connect.sid',       // the name of the cookie where express/connect stores its session_id
-  secret:       config.secret,    // the session_secret to parse the cookie
-  store:        sessionStore,        // we NEED to use a sessionstore. no memorystore please
-  success:      onAuthorizeSuccess,  // *optional* callback on success - read more below
-  fail:         onAuthorizeFail,     // *optional* callback on fail/error - read more below
+  key: 'connect.sid',       // the name of the cookie where express/connect stores its session_id
+  secret: config.secret,    // the session_secret to parse the cookie
+  store: sessionStore,        // we NEED to use a sessionstore. no memorystore please
+  success: onAuthorizeSuccess,  // *optional* callback on success - read more below
+  fail: onAuthorizeFail,     // *optional* callback on fail/error - read more below
 }));
 
-function onAuthorizeSuccess(data, accept){
+function onAuthorizeSuccess(data, accept) {
   console.log('successful connection to socket.io');
   accept();
 }
 
-function onAuthorizeFail(data, message, error, accept){
+function onAuthorizeFail(data, message, error, accept) {
   console.log('failed connection to socket.io:', message);
-  if(error)
+  if (error)
     accept(new Error(message));
 }
 
@@ -69,9 +69,13 @@ require('./realtime/io')(io);
 
 const mainRoutes = require('./routes/main');
 const userRoutes = require('./routes/user');
+const orderRoutes = require('./routes/order');
+
 
 app.use(mainRoutes);
 app.use(userRoutes);
+app.use(orderRoutes);
+
 
 http.listen(config.port, (err) => {
   if (err) console.log(err);
